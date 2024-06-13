@@ -3,6 +3,7 @@
 class LicenseValidationService < BaseService
 
   def initialize(license:, scope: nil, skip_touch: false)
+    raise "BROKEN ON PURPOSE"
     @account    = license&.account
     @product    = license&.product
     @license    = license
