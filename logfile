@@ -1,0 +1,4 @@
+2024-06-13 19:31:38.178 BST [65114] FATAL:  lock file "postmaster.pid" already exists
+2024-06-13 19:31:38.178 BST [65114] HINT:  Is another postmaster (PID 65094) running in data directory "/usr/local/var/postgresql@14"?
+2024-06-13 19:31:44.901 BST [65176] FATAL:  lock file "postmaster.pid" already exists
+2024-06-13 19:31:44.901 BST [65176] HINT:  Is another postmaster (PID 65094) running in data directory "/usr/local/var/postgresql@14"?
