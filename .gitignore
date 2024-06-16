@@ -36,3 +36,6 @@
 
 # Other
 .DS_Store
+.idea
+coverage
+.ruby-version
