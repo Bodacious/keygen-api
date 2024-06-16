@@ -2,7 +2,7 @@
 
 class LicenseValidationService < BaseService
 
-  def initialize(license:, scope: nil, skip_touch: false)
+  def initialize(license:, scope: nil, skip_touch: false, validators: [])
     @account    = license&.account
     @product    = license&.product
     @license    = license
@@ -11,9 +11,11 @@ class LicenseValidationService < BaseService
     @touches    = {
       last_validated_at: Time.current,
     }
+    @validators = validators
   end
 
   def call
+
     res = validate!
     touch! unless skip_touch?
     res
@@ -25,24 +27,24 @@ class LicenseValidationService < BaseService
               :product,
               :license,
               :scope,
-              :touches
+              :touches,
+              :validators
 
   def skip_touch? = !!@skip_touch
 
   def validate!
-    return [false, "does not exist", :NOT_FOUND] if license.nil?
+    return_validator = validators.find do |validator_class|
+      validator = validator_class.new(license:, scope:)
+      if !validator.invalid?
+        touches.merge!(validator.license_updates)
+      end
+      validator.invalid?
+    end
+    if return_validator.present?
+      return return_validator.result
+    end
 
-    # Check if license's user has been banned
-    return [false, "is banned", :BANNED] if
-      license.banned?
 
-    # Check if license is suspended
-    return [false, "is suspended", :SUSPENDED] if license.suspended?
-
-    # When revoking access, first check if license is expired (i.e. higher precedence)
-    return [false, "is expired", :EXPIRED] if
-      license.revoke_access? &&
-      license.expired?
 
     # Check if license is overdue for check in
     return [false, "is overdue for check in", :OVERDUE] if license.check_in_overdue?
