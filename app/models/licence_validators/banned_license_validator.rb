@@ -4,7 +4,7 @@ module LicenseValidators
   class BannedLicenseValidator
     attr_reader :license_updates
 
-    def initialize(license:,**)
+    def initialize(license:, **)
       @license = license
       @license_updates = {}
     end
