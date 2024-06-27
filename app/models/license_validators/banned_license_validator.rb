@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module LicenseValidators
-  # Check if license is overdue for check in
-
-  class OverdueLicenseValidator
+  class BannedLicenseValidator
     attr_reader :license
 
     def initialize(license:, **)
@@ -11,11 +9,11 @@ module LicenseValidators
     end
 
     def invalid?
-      license.check_in_overdue?
+      license.banned?
     end
 
-    def result
-      [false, "is overdue for check in", :OVERDUE]
+    def failure_result
+      [false, "is banned", :BANNED]
     end
   end
 end

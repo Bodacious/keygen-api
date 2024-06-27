@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 module LicenseValidators
-  class BannedLicenseValidator
-    attr_reader :license_updates
+  class SuspendedLicenseValidator
+    attr_reader :license
 
     def initialize(license:, **)
       @license = license
-      @license_updates = {}
     end
 
     def invalid?
-      license.banned?
+      license.suspended?
     end
 
-    def result
-      [false, "banned", :banned]
+    def failure_result
+      [false, "is suspended", :SUSPENDED]
     end
   end
 end

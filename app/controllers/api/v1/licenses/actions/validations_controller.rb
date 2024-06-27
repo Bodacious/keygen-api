@@ -8,27 +8,18 @@ module Api::V1::Licenses::Actions
     before_action :authenticate_with_token, only: %i[validate_by_key]
     before_action :set_license, only: %i[quick_validate_by_id validate_by_id]
 
-    class QuickValidationList < DelegateClass(Array)
-      def initialize
-        super([
-          LicenseValidators::NotFoundValidator,
-          LicenseValidators::BannedLicenseValidator,
-          LicenseValidators::SuspendedLicenseValidator,
-          LicenseValidators::ExpiredLicenseValidator,
-              ])
-      end
-    end
     def quick_validate_by_id
       authorize! license,
         to: :validate?
 
       # FIXME(ezekg) Skipping :touch on origin is not a good idea, since
       #              the origin header can be set by anybody.
-      valid, detail, code = LicenseValidationService.call(
+      valid, detail, code = LicenseValidationService.new(
         license: license,
         scope: false,
         skip_touch: request.headers['origin'] == 'https://app.keygen.sh',
-        validators:[])
+        validator_classes: LicenseValidators::QuickValidationList.new
+      ).run_all_validation_checks!
       meta = {
         ts: Time.current, # Included so customer has a signed ts to utilize elsewhere
         valid:,
@@ -80,11 +71,11 @@ module Api::V1::Licenses::Actions
       authorize! license,
         to: :validate?
 
-      valid, detail, code = LicenseValidationService.call(
+      valid, detail, code = LicenseValidationService.new(
         license: license,
         scope: validation_meta[:scope],
-        validators: QuickValidationList.new
-      )
+        validator_classes: LicenseValidators::IdValidationsList.new
+      ).run_all_validation_checks!
       meta = {
         ts: Time.current,
         valid:,
@@ -166,7 +157,11 @@ module Api::V1::Licenses::Actions
         with: LicensePolicy,
         to: :validate_key?
 
-      valid, detail, code = LicenseValidationService.call(license: license, scope: validation_meta[:scope],validators:[])
+      valid, detail, code = LicenseValidationService.new(
+        license: license,
+        scope: validation_meta[:scope],
+        validator_classes: LicenseValidators::KeyValidationList.new
+      ).run_all_validation_checks!
       meta = {
         ts: Time.current,
         valid:,

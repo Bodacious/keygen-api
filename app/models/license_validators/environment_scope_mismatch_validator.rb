@@ -13,7 +13,7 @@ module LicenseValidators
       )
     end
 
-    def result
+    def failure_result
       [false, "environment scope does not match", :ENVIRONMENT_SCOPE_MISMATCH]
     end
   end

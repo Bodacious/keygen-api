@@ -14,7 +14,7 @@ module LicenseValidators
       scope.present? && scope.key?(:environment) && license.policy.require_environment_scope?
     end
 
-    def result
+    def failure_result
       [false, "environment scope is required", :ENVIRONMENT_SCOPE_REQUIRED]
     end
   end
