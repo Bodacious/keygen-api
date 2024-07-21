@@ -2,6 +2,10 @@
 
 class LicenseValidationService
   def initialize(license:, scope: nil, skip_touch: false, validators_list: [])
+    puts "license: #{license}"
+    puts "scope: #{scope}"
+    puts "skip_touch: #{skip_touch}"
+
     @account = license&.account
     @product = license&.product
     @license = license

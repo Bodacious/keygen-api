@@ -2,17 +2,15 @@
 
 module LicenseValidators
   class EntitlementsMissingValidator
-    attr_reader :license, :scope
-    def initialize(license:, scope: {})
+    attr_reader :license, :entitlements
+    def initialize(license:, scope:)
       @license= license
-      @scope = Hash(scope)
+      scope = Hash(scope)
+      @entitlements = Array(scope[:entitlements]).uniq
     end
 
     def invalid?
-
-      entitlements = Array(scope[:entitlements]).uniq
-
-      !(scope.present? && scope.key?(:entitlements)) && license.entitlements.where(code: entitlements).count != entitlements.size
+      license.entitlements.where(code: entitlements).count != entitlements.size
     end
 
     def failure_result
