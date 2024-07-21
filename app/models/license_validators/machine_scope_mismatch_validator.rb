@@ -6,11 +6,14 @@ module LicenseValidators
 
     def initialize(license:, scope: {})
       @license = license
-      @scope = license
+      @scope = Hash(scope)
     end
 
     def invalid?
-      license.machines.find_by(id: scope[:machine]).present?
+      return false if scope.nil? || !scope.key?(:machine)
+      return false if license.machines_count.zero?
+
+      license.machines.find_by(id: scope[:machine]).nil?
     end
 
     def failure_result

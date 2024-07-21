@@ -5,11 +5,12 @@ module LicenseValidators
     attr_reader :license, :scope
     def initialize(license:, scope: {})
       @license= license
-      @scope = scope
+      @scope = Hash(scope)
     end
 
     def invalid?
-      entitlements = scope[:entitlements].uniq
+
+      entitlements = Array(scope[:entitlements]).uniq
 
       !(scope.present? && scope.key?(:entitlements)) && license.entitlements.where(code: entitlements).count != entitlements.size
     end

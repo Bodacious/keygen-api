@@ -6,15 +6,16 @@ module LicenseValidators
 
     def initialize(license:, scope: {})
       @license = license
-      @scope = scope
+      @scope = Hash(scope)
+      @policy = license.policy
     end
 
     def invalid?
-      !(scope.present? && scope.key?(:policy)) && license.policy.require_policy_scope?
+      scope.key?(:policy) && license.policy_id != scope[:policy]
     end
 
     def failure_result
-      [false, "policy scope is required", :POLICY_SCOPE_REQUIRED]
+      [false, "policy scope does not match", :POLICY_SCOPE_MISMATCH]
     end
   end
 end

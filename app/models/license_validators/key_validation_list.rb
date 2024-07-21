@@ -18,12 +18,27 @@ module LicenseValidators
               LicenseValidators::UserScopeRequiredValidator,
               LicenseValidators::UserScopeMismatchValidator,
               LicenseValidators::EntitlementsMissingValidator,
-              LicenseValidators::EntitlementsScopeValidator,
+              LicenseValidators::EntitlementsScopeEmptyValidator,
               LicenseValidators::MachineScopeRequiredValidator,
               LicenseValidators::NoMachineValidator,
+              LicenseValidators::MachineScopeMismatchValidator,
               LicenseValidators::MachineUserScopeMismatchValidator,
-              LicenseValidators::HeartbeatNotStartedValidator,
-              LicenseValidators::HeartbeatDeadValidator,
+              LicenseValidators::MachineHeartbeatNotStartedValidator,
+              LicenseValidators::MachineHeartbeatDeadValidator,
+              LicenseValidators::FingerprintScopeRequiredValidator,
+              LicenseValidators::FingerprintScopeEmptyValidator,
+              LicenseValidators::FingerprintNoMachineValidator,
+              LicenseValidators::FingerprintHeartbeatDeadValidator,
+              # scope mismatch validators
+              LicenseValidators::FingerprintScopeMismatchMatchMostValidator,
+              LicenseValidators::FingerprintScopeMismatchMatchTwoValidator,
+              LicenseValidators::FingerprintScopeMismatchMatchAllValidator,
+              LicenseValidators::FingerprintScopeMismatchMatchAnyValidator,
+              LicenseValidators::FingerprintScopeMismatchValidator,
+
+              LicenseValidators::FingerprintUserScopeMismatchValidator,
+              LicenseValidators::FingerprintHeartbeatNotStartedValidator,
+
             ])
     end
   end

@@ -11,6 +11,7 @@ module Api::V1::Licenses::Actions
     def quick_validate_by_id
       authorize! license,
         to: :validate?
+      puts "quick_validate_by_id"
 
       # FIXME(ezekg) Skipping :touch on origin is not a good idea, since
       #              the origin header can be set by anybody.
@@ -18,7 +19,7 @@ module Api::V1::Licenses::Actions
         license: license,
         scope: false,
         skip_touch: request.headers['origin'] == 'https://app.keygen.sh',
-        validator_classes: LicenseValidators::QuickValidationList.new
+        validators_list: LicenseValidators::QuickValidationList.new
       ).run_all_validation_checks!
       meta = {
         ts: Time.current, # Included so customer has a signed ts to utilize elsewhere
@@ -70,11 +71,11 @@ module Api::V1::Licenses::Actions
     def validate_by_id
       authorize! license,
         to: :validate?
-
+      puts "validate_by_id"
       valid, detail, code = LicenseValidationService.new(
         license: license,
         scope: validation_meta[:scope],
-        validator_classes: LicenseValidators::IdValidationsList.new
+        validators_list: LicenseValidators::IdValidationList.new
       ).run_all_validation_checks!
       meta = {
         ts: Time.current,
@@ -143,6 +144,7 @@ module Api::V1::Licenses::Actions
       end
     }
     def validate_by_key
+      puts "validate_by_key"
       @license = LicenseKeyLookupService.call(
         environment: current_environment,
         account: current_account,
@@ -160,7 +162,7 @@ module Api::V1::Licenses::Actions
       valid, detail, code = LicenseValidationService.new(
         license: license,
         scope: validation_meta[:scope],
-        validator_classes: LicenseValidators::KeyValidationList.new
+        validators_list: LicenseValidators::KeyValidationList.new
       ).run_all_validation_checks!
       meta = {
         ts: Time.current,

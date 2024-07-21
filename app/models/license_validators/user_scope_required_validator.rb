@@ -1,10 +1,10 @@
-module LicenseValidator
+module LicenseValidators
   class UserScopeRequiredValidator
     attr_reader :license
     attr_reader :scope
-    def initialize(license:, scope: {})
+    def initialize(license:, scope:)
       @license = license
-      @scope = scope
+      @scope = Hash(scope)
     end
 
     def invalid?

@@ -6,10 +6,12 @@ module LicenseValidators
     attr_reader :scope
     def initialize(license: , scope:{})
       @license = license
-      @scope = scope
+      @scope = Hash(scope)
     end
 
     def invalid?
+      return false if scope.nil? || !scope.key?(:machine)
+
       machine = license.machines.find_by(id: scope[:machine])
       user = scope[:user]
 

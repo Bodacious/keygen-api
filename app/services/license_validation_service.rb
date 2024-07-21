@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LicenseValidationService
-  def initialize(license:, scope: nil, skip_touch: false, validator_classes: [])
+  def initialize(license:, scope: nil, skip_touch: false, validators_list: [])
     @account = license&.account
     @product = license&.product
     @license = license
@@ -10,7 +10,7 @@ class LicenseValidationService
     @touches = {
       last_validated_at: Time.current,
     }
-    @validators = validator_classes.lazy.map { |validator_class|
+    @validators = validators_list.lazy.map { |validator_class|
       puts "ValidatorClass:#{validator_class}"
       validator_class.new(license:, scope:)
     }
@@ -33,52 +33,12 @@ class LicenseValidationService
 
   def skip_touch? = !!@skip_touch
 
+
+
   def validate!
     first_invalid_validator = validators.find(&:invalid?)
     return first_invalid_validator.failure_result if first_invalid_validator
 
-
-    # Check against fingerprint scope requirements
-    if scope.present? && (scope.key?(:fingerprint) || scope.key?(:fingerprints))
-      fingerprints = Array(scope[:fingerprint] || scope[:fingerprints]).compact
-                                                                       .uniq
-
-      return [false, "fingerprint scope is empty", :FINGERPRINT_SCOPE_EMPTY] if fingerprints.empty?
-
-      case
-      when !license.policy.floating? && license.machines_count == 0
-        return [false, "fingerprint is not activated (has no associated machine)", :NO_MACHINE]
-      when license.policy.floating? && license.machines_count == 0
-        return [false, "fingerprint is not activated (has no associated machines)", :NO_MACHINES]
-      else
-        machines = license.machines.with_fingerprint(fingerprints)
-        user = scope[:user]
-
-        dead_machines = machines.dead
-        return [false, 'machine heartbeat is dead', :HEARTBEAT_DEAD] if dead_machines.count == fingerprints.size
-
-        alive_machines = machines.alive
-        case
-        when fingerprints.size > 1 && license.policy.machine_match_most?
-          return [false, "one or more fingerprint is not activated (does not match enough associated machines)", :FINGERPRINT_SCOPE_MISMATCH] if alive_machines.count < (fingerprints.size / 2.0).ceil
-        when fingerprints.size > 1 && license.policy.machine_match_two?
-          return [false, "one or more fingerprint is not activated (does not match at least 2 associated machines)", :FINGERPRINT_SCOPE_MISMATCH] if alive_machines.count < 2
-        when fingerprints.size > 1 && license.policy.machine_match_all?
-          return [false, "one or more fingerprint is not activated (does not match all associated machines)", :FINGERPRINT_SCOPE_MISMATCH] if alive_machines.count < fingerprints.size
-        when fingerprints.size > 1 && license.policy.machine_match_any?
-          return [false, "one or more fingerprint is not activated (does not match any associated machines)", :FINGERPRINT_SCOPE_MISMATCH] if alive_machines.count == 0
-        else
-          return [false, "fingerprint is not activated (does not match any associated machines)", :FINGERPRINT_SCOPE_MISMATCH] if alive_machines.count == 0
-        end
-
-        return [false, "user scope does not match (does not match associated machine owners)", :USER_SCOPE_MISMATCH] unless user.nil? || alive_machines.for_owner(user).union(alive_machines.for_owner(nil)).count == alive_machines.count
-
-        return [false, 'machine heartbeat is required', :HEARTBEAT_NOT_STARTED] if license.policy.require_heartbeat? &&
-          alive_machines.any?(&:not_started?)
-      end
-    else
-      return [false, "fingerprint scope is required", :FINGERPRINT_SCOPE_REQUIRED] if license.policy.require_fingerprint_scope?
-    end
 
     # Check against component scope requirements
     if scope.present? && scope.key?(:components)

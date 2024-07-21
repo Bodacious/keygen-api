@@ -6,7 +6,7 @@ module LicenseValidators
 
     def initialize(license:, scope: {})
       @license = license
-      @scope = scope
+      @scope = Hash(scope)
     end
 
     def invalid?

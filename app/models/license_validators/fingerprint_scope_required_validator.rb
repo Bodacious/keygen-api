@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 module LicenseValidators
-  class ProductScopeMismatchValidator
+  class FingerprintScopeRequiredValidator
     attr_reader :license
     attr_reader :scope
+
     def initialize(license:, scope: {})
       @license = license
       @scope = Hash(scope)
     end
 
     def invalid?
-      scope.present? && scope.key?(:product) && license.product.id != scope[:product]
+      return false unless license.policy.require_fingerprint_scope?
+
+      scope.slice(:fingerprint, :fingerprints).empty?
     end
 
     def failure_result
-      return [false, "product scope does not match", :PRODUCT_SCOPE_MISMATCH]
+      [false, "fingerprint scope is required", :FINGERPRINT_SCOPE_REQUIRED]
     end
   end
 end
