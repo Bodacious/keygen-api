@@ -5,7 +5,7 @@ module LicenseValidators
     attr_reader :license
     attr_reader :scope
 
-    def initialize(license:, scope: )
+    def initialize(license:, scope:)
       @license = license
       @scope = scope
       @fingerprints = Hash(scope).slice(:fingerprint, :fingerprints).values.first
@@ -25,7 +25,8 @@ module LicenseValidators
     end
 
     def failure_result
-      [false, "user scope does not match (does not match associated machine owners)", :USER_SCOPE_MISMATCH]
+      [false, "user scope does not match (does not match associated machine owners)",
+       :USER_SCOPE_MISMATCH]
     end
   end
 end

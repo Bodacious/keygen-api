@@ -1,8 +1,11 @@
 module LicenseValidators
   class EntitlementsScopeEmptyValidator
-    attr_reader :license, :scope
+    attr_reader :license
+    attr_reader :scope
+
     def initialize(license:, scope: {})
-      @license, @scope = license, scope
+      @license = license
+      @scope = scope
     end
 
     def invalid?

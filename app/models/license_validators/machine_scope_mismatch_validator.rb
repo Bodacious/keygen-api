@@ -2,7 +2,8 @@
 
 module LicenseValidators
   class MachineScopeMismatchValidator
-    attr_reader :license, :scope
+    attr_reader :license
+    attr_reader :scope
 
     def initialize(license:, scope: {})
       @license = license
@@ -17,7 +18,8 @@ module LicenseValidators
     end
 
     def failure_result
-      [false, "machine is not activated (does not match any associated machines)", :MACHINE_SCOPE_MISMATCH]
+      [false, "machine is not activated (does not match any associated machines)",
+       :MACHINE_SCOPE_MISMATCH]
     end
   end
 end

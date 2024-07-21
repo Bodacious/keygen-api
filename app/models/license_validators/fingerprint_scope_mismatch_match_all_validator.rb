@@ -2,8 +2,12 @@
 
 module LicenseValidators
   class FingerprintScopeMismatchMatchAllValidator
-    attr_reader :machines, :fingerprints, :policy, :scope
-    def initialize(license:,scope: )
+    attr_reader :machines
+    attr_reader :fingerprints
+    attr_reader :policy
+    attr_reader :scope
+
+    def initialize(license:, scope:)
       @scope = Hash(scope)
       @fingerprints = Array(self.scope[:fingerprint] || self.scope[:fingerprints]).compact.uniq
       @machines = license.machines.with_fingerprint(fingerprints)
@@ -17,7 +21,8 @@ module LicenseValidators
     end
 
     def failure_result
-      [false, "one or more fingerprint is not activated (does not match all associated machines)", :FINGERPRINT_SCOPE_MISMATCH]
+      [false,
+       "one or more fingerprint is not activated (does not match all associated machines)", :FINGERPRINT_SCOPE_MISMATCH]
     end
   end
 end

@@ -162,7 +162,7 @@ module Api::V1::Licenses::Actions
       valid, detail, code = LicenseValidationService.new(
         license: license,
         scope: validation_meta[:scope],
-        validators_list: LicenseValidators::KeyValidationList.new
+        validators_list: LicenseValidators::IdValidationList.new
       ).run_all_validation_checks!
       meta = {
         ts: Time.current,

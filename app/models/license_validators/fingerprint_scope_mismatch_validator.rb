@@ -2,7 +2,8 @@
 
 module LicenseValidators
   class FingerprintScopeMismatchValidator
-    attr_reader :alive_machines, :scope
+    attr_reader :alive_machines
+    attr_reader :scope
 
     def initialize(license:, scope:)
       @scope = Hash(scope)
@@ -17,7 +18,8 @@ module LicenseValidators
     end
 
     def failure_result
-      [false, "fingerprint is not activated (does not match any associated machines)", :FINGERPRINT_SCOPE_MISMATCH]
+      [false, "fingerprint is not activated (does not match any associated machines)",
+       :FINGERPRINT_SCOPE_MISMATCH]
     end
   end
 end

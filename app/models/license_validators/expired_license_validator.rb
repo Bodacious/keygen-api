@@ -2,11 +2,12 @@
 
 module LicenseValidators
   class ExpiredLicenseValidator
-
     attr_reader :license
-    def initialize(license:,**)
+
+    def initialize(license:, **)
       @license = license
     end
+
     def invalid?
       license.revoke_access? &&
         license.expired?

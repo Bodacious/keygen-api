@@ -4,6 +4,7 @@ module LicenseValidators
   class ProductScopeMismatchValidator
     attr_reader :license
     attr_reader :scope
+
     def initialize(license:, scope: {})
       @license = license
       @scope = Hash(scope)
@@ -14,7 +15,7 @@ module LicenseValidators
     end
 
     def failure_result
-      return [false, "product scope does not match", :PRODUCT_SCOPE_MISMATCH]
+      [false, "product scope does not match", :PRODUCT_SCOPE_MISMATCH]
     end
   end
 end

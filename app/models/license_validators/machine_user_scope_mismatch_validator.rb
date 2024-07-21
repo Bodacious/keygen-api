@@ -4,7 +4,8 @@ module LicenseValidators
   class MachineUserScopeMismatchValidator
     attr_reader :license
     attr_reader :scope
-    def initialize(license: , scope:{})
+
+    def initialize(license:, scope: {})
       @license = license
       @scope = Hash(scope)
     end
@@ -19,7 +20,8 @@ module LicenseValidators
     end
 
     def failure_result
-      [false, "user scope does not match (does not match associated machine owner)", :USER_SCOPE_MISMATCH]
+      [false, "user scope does not match (does not match associated machine owner)",
+       :USER_SCOPE_MISMATCH]
     end
   end
 end

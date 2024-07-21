@@ -1,6 +1,5 @@
 module LicenseValidators
   class PolicyScopeMismatchValidator
-
     attr_reader :license
     attr_reader :scope
 

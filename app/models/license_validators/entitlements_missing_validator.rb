@@ -2,9 +2,11 @@
 
 module LicenseValidators
   class EntitlementsMissingValidator
-    attr_reader :license, :entitlements
+    attr_reader :license
+    attr_reader :entitlements
+
     def initialize(license:, scope:)
-      @license= license
+      @license = license
       scope = Hash(scope)
       @entitlements = Array(scope[:entitlements]).uniq
     end

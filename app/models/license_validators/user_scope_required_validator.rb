@@ -2,6 +2,7 @@ module LicenseValidators
   class UserScopeRequiredValidator
     attr_reader :license
     attr_reader :scope
+
     def initialize(license:, scope:)
       @license = license
       @scope = Hash(scope)

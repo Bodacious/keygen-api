@@ -15,10 +15,10 @@ module LicenseValidators
     end
 
     def failure_result
-      if !license.policy.floating?
-        [false, "machine is not activated (has no associated machine)", :NO_MACHINE]
-      else
+      if license.policy.floating?
         [false, "machine is not activated (has no associated machines)", :NO_MACHINES]
+      else
+        [false, "machine is not activated (has no associated machine)", :NO_MACHINE]
       end
     end
   end

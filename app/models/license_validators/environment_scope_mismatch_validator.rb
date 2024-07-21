@@ -4,6 +4,7 @@ module LicenseValidators
   class EnvironmentScopeMismatchValidator
     attr_reader :license
     attr_reader :scope
+
     def initialize(license:, scope:)
       @license = license
       @scope = scope
