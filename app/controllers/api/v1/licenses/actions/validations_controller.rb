@@ -14,7 +14,8 @@ module Api::V1::Licenses::Actions
 
       # FIXME(ezekg) Skipping :touch on origin is not a good idea, since
       #              the origin header can be set by anybody.
-      valid, detail, code = LicenseValidationService.call(license: license, scope: false)
+      valid, detail, code = LicenseValidationService.new(license: license,
+                                                          validators_list: LicenseValidators::IdValidationList.new).run_all_validation_checks!
       meta = {
         ts: Time.current, # Included so customer has a signed ts to utilize elsewhere
         valid:,
@@ -24,8 +25,7 @@ module Api::V1::Licenses::Actions
       license.persist_last_validated_attributes! unless origin_is_keygen?
       Keygen.logger.info "[license.quick-validate] account_id=#{current_account.id} license_id=#{license&.id} validation_valid=#{valid} validation_detail=#{detail} validation_code=#{code}"
 
-      Current.resource = license if
-        license.present?
+      Current.resource = license if license.present?
 
       render jsonapi: license, meta: meta
     end
@@ -66,7 +66,11 @@ module Api::V1::Licenses::Actions
       authorize! license,
         to: :validate?
 
-      valid, detail, code = LicenseValidationService.call(license: license, scope: validation_meta[:scope])
+      valid, detail, code = LicenseValidationService.new(
+        license: license,
+        scope: validation_meta[:scope],
+        validators_list: LicenseValidators::IdValidationList.new
+      ).run_all_validation_checks!
       meta = {
         ts: Time.current,
         valid:,
@@ -149,7 +153,12 @@ module Api::V1::Licenses::Actions
         with: LicensePolicy,
         to: :validate_key?
 
-      valid, detail, code = LicenseValidationService.call(license: license, scope: validation_meta[:scope])
+      valid, detail, code = LicenseValidationService.new(
+        license: license,
+        scope: validation_meta[:scope],
+        validators_list: LicenseValidators::IdValidationList.new
+      ).run_all_validation_checks!
+
       meta = {
         ts: Time.current,
         valid:,
