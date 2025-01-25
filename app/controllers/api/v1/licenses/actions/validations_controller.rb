@@ -14,8 +14,8 @@ module Api::V1::Licenses::Actions
 
       # FIXME(ezekg) Skipping :touch on origin is not a good idea, since
       #              the origin header can be set by anybody.
-      valid, detail, code = LicenseValidationService.new(license: license,
-                                                          validators_list: LicenseValidators::IdValidationList.new).run_all_validation_checks!
+      valid, detail, code = LicenseValidator.new(license: license,
+                                                 validators_list: LicenseValidators::IdValidationList.new).run_all_validation_checks!
       meta = {
         ts: Time.current, # Included so customer has a signed ts to utilize elsewhere
         valid:,
@@ -66,7 +66,7 @@ module Api::V1::Licenses::Actions
       authorize! license,
         to: :validate?
 
-      valid, detail, code = LicenseValidationService.new(
+      valid, detail, code = LicenseValidator.new(
         license: license,
         scope: validation_meta[:scope],
         validators_list: LicenseValidators::IdValidationList.new
@@ -153,7 +153,7 @@ module Api::V1::Licenses::Actions
         with: LicensePolicy,
         to: :validate_key?
 
-      valid, detail, code = LicenseValidationService.new(
+      valid, detail, code = LicenseValidator.new(
         license: license,
         scope: validation_meta[:scope],
         validators_list: LicenseValidators::IdValidationList.new

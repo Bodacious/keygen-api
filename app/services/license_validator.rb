@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LicenseValidationService
+class LicenseValidator
 
   def initialize(license:, scope: nil, validators_list: [])
     @account = license&.account
